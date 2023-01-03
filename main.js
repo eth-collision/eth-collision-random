@@ -65,7 +65,10 @@ function getFileCount(file) {
       })
       .on("end", function () {
         resolve(count);
-      });
+      })
+      .on("error", function (err) {
+        resolve(0);
+      }
   });
 }
 
@@ -79,4 +82,5 @@ function countFile() {
   });
 }
 
+countFile();
 setInterval(countFile, 60 * 60 * 1000);
