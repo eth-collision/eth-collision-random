@@ -1,7 +1,7 @@
 const { ethers } = require("ethers");
 const axios = require("axios");
 const fs = require("fs");
-const apiKey = require("./config.js");
+const { apiKey } = require("./config.js");
 
 function genRandPriKey() {
   let s = "0123456789abcdef";
@@ -18,10 +18,9 @@ function getAddress(privateKey) {
 }
 
 function getBalance(priKey, address) {
+  url = `https://api.etherscan.io/api?module=account&action=balance&address=${address}&tag=latest&apikey=${apiKey}`;
   axios
-    .get(
-      `https://api.etherscan.io/api?module=account&action=balance&address=${address}&tag=latest&apikey=${apiKey}`
-    )
+    .get(url)
     .then((res) => {
       writeFile(priKey, address, res.data.result);
     })
@@ -30,11 +29,11 @@ function getBalance(priKey, address) {
 
 function writeFile(priKey, address, balance) {
   filename = "";
-  if (balance != '0') {
+  if (balance == '0') {
     filename = "no.txt";
-  } else{
+  } else {
     filename = "yes.txt";
-  } 
+  }
   data = `${priKey},${address},${balance}\n`;
   fs.appendFile(filename, data, function (err) {
     if (err) console.log(err);
@@ -48,8 +47,4 @@ function execOnce() {
   getBalance(addr[0], addr[1]);
 }
 
-setInterval(() => {
-  for (let i = 0; i < 2; i++) {
-    execOnce();
-  }
-}, 1000);
+setInterval(execOnce, 1000);
