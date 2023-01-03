@@ -1,1 +1,2 @@
 >no.txt
+>nohup.out

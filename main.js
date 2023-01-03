@@ -68,7 +68,7 @@ function getFileCount(file) {
       })
       .on("error", function (err) {
         resolve(0);
-      }
+      });
   });
 }
 
