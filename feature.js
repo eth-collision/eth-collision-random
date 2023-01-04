@@ -50,16 +50,61 @@ function writeFile(priKey, address, balance, filename) {
 }
 
 function execOnceMultiAddr(keys, addrs) {
-  let keys = [];
-  let addrs = "";
-  for (let i = 0; i < 10; i++) {
-    let priKey = genRandPriKey();
-    let addr = getAddress(priKey);
-    keys.push(priKey);
-    addrs += addr[1] + ",";
+  for (let i = 0; i < addrs.length; i += 20) {
+    let k = [];
+    let s = "";
+    for (let j = i; j < i + 20 && j < addrs.length; j++) {
+      k.push(keys[j]);
+      s += addrs[j] + ",";
+    }
+    s = s.slice(0, -1);
+    console.log(k, s);
+    getBalanceMultiAddr(k, s);
+    setTimeout(() => {
+      console.log("Waiting for 1 second...");
+    }, 1000);
   }
-  addrs = addrs.slice(0, -1);
-  getBalanceMultiAddr(keys, addrs);
 }
 
-setInterval(execOnceMultiAddr, 1000);
+function getAddrs(priKeys) {
+  let keys = [];
+  let addrs = [];
+  for (let i = 0; i < priKeys.length; i++) {
+    let [k, v] = getAddress(priKeys[i]);
+    keys.push(k);
+    addrs.push(v);
+  }
+  execOnceMultiAddr(keys, addrs);
+}
+
+function rule1() {
+  let s = "0123456789abcdef";
+  let arr = [];
+  for (let j = 1; j < 16; j++) {
+    let hex = "0x";
+    for (let i = 0; i < 64; i++) {
+      hex += s[j];
+    }
+    arr.push(hex);
+  }
+  return arr;
+}
+// console.log(rule1());
+// getAddrs(rule1());
+
+function rule2() {
+  let arr = [];
+  for (let i = 1; i < 10000; i++) {
+    let hex = "0x";
+    let s = i.toString(16);
+    for (let j = 0; j < 64 - s.length; j++) {
+      hex += "0";
+    }
+    hex += s;
+    arr.push(hex);
+  }
+  return arr;
+}
+let r2 = rule2();
+console.log(r2[r2.length - 1]);
+// getAddrs(rule2());
