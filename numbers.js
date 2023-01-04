@@ -64,7 +64,11 @@ function getAddrs(priKeys) {
   execOnceMultiAddr(keys, addrs);
 }
 
-function rule2() {
+async function sleep(millis) {
+  return new Promise(resolve => setTimeout(resolve, millis));
+}
+
+async function rule2() {
   for (let i = 1; i < 2000000; i += 20) {
     let arr = [];
     for (let j = i; j < i + 20; j++) {
@@ -79,9 +83,7 @@ function rule2() {
     }
     // console.log(arr)
     getAddrs(arr);
-    setTimeout(() => {
-      console.log("Waiting for 1 second...");
-    }, 1000);
+    await sleep(1000)
   }
 }
 rule2();
