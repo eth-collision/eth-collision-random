@@ -22,18 +22,45 @@ function getBalance(priKey, address) {
   axios
     .get(url)
     .then((res) => {
-      writeFile(priKey, address, res.data.result);
+      if (res.data.status == "1") {
+        if (res.data.result == "0") {
+          writeFile(priKey, address, res.data.result, "no.txt");
+        } else {
+          writeFile(priKey, address, res.data.result, "yes.txt");
+        }
+      }
+      if (res.data.status == "0") {
+        writeFile(priKey, address, res.data.result, "err.txt");
+      }
     })
     .catch((err) => console.log(err));
 }
 
-function writeFile(priKey, address, balance) {
-  filename = "";
-  if (balance == "0") {
-    filename = "no.txt";
-  } else {
-    filename = "yes.txt";
-  }
+function getBalanceMultiAddr(priKey, address) {
+  url = `https://api.etherscan.io/api?module=account&action=balancemulti&address=${address}&tag=latest&apikey=${apiKey}`;
+  axios
+    .get(url)
+    .then((res) => {
+      if (res.data.status == "1") {
+        for (let i = 0; i < res.data.result.length; i++) {
+          let data = res.data.result[i];
+          let account = data["account"];
+          let balance = data["balance"];
+          if (balance == "0") {
+            writeFile(priKey[i], account, balance, "no.txt");
+          } else {
+            writeFile(priKey[i], account, balance, "yes.txt");
+          }
+        }
+      }
+      if (res.data.status == "0") {
+        writeFile(priKey, address, res.data.result, "err.txt");
+      }
+    })
+    .catch((err) => console.log(err));
+}
+
+function writeFile(priKey, address, balance, filename) {
   data = `${priKey},${address},${balance}\n`;
   fs.appendFile(filename, data, function (err) {
     if (err) console.log(err);
@@ -41,13 +68,25 @@ function writeFile(priKey, address, balance) {
   });
 }
 
-function execOnce() {
+function execOnceSingleAddr() {
   let priKey = genRandPriKey();
   let addr = getAddress(priKey);
-  getBalance(addr[0], addr[1]);
 }
 
-setInterval(execOnce, 1000);
+function execOnceMultiAddr() {
+  let keys = [];
+  let addrs = "";
+  for (let i = 0; i < 10; i++) {
+    let priKey = genRandPriKey();
+    let addr = getAddress(priKey);
+    keys.push(priKey);
+    addrs += addr[1] + ",";
+  }
+  addrs = addrs.slice(0, -1);
+  getBalanceMultiAddr(keys, addrs);
+}
+
+setInterval(execOnceMultiAddr, 1000);
 
 function sendTgMsg(message) {
   const { tgKey, tgChatId } = require("./config.js");
@@ -75,8 +114,9 @@ function getFileCount(file) {
 function countFile() {
   let msg = "";
   Promise.all([
-    getFileCount("no.txt").then((res) => (msg += `No: ${res}, `)),
-    getFileCount("yes.txt").then((res) => (msg += `Yes: ${res}`)),
+    getFileCount("no.txt").then((res) => (msg += `no: ${res};`)),
+    getFileCount("yes.txt").then((res) => (msg += `yes: ${res};`)),
+    getFileCount("err.txt").then((res) => (msg += `err: ${res};`)),
   ]).then(() => {
     sendTgMsg(msg);
   });
