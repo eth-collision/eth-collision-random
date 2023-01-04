@@ -49,7 +49,7 @@ function writeFile(priKey, address, balance, filename) {
   });
 }
 
-function execOnceMultiAddr(keys, addrs) {
+async function execOnceMultiAddr(keys, addrs) {
   for (let i = 0; i < addrs.length; i += 20) {
     let k = [];
     let s = "";
@@ -58,11 +58,8 @@ function execOnceMultiAddr(keys, addrs) {
       s += addrs[j] + ",";
     }
     s = s.slice(0, -1);
-    console.log(k, s);
     getBalanceMultiAddr(k, s);
-    setTimeout(() => {
-      console.log("Waiting for 1 second...");
-    }, 1000);
+    await sleep(1000);
   }
 }
 
@@ -92,19 +89,51 @@ function rule1() {
 // console.log(rule1());
 // getAddrs(rule1());
 
+async function sleep(millis) {
+  return new Promise((resolve) => setTimeout(resolve, millis));
+}
 function rule2() {
+  let s = "0123456789abcdef";
   let arr = [];
-  for (let i = 1; i < 10000; i++) {
-    let hex = "0x";
-    let s = i.toString(16);
-    for (let j = 0; j < 64 - s.length; j++) {
-      hex += "0";
+  for (let t = 50; t < 64; t++) {
+    for (let k = 1; k < 16; k++) {
+      for (let j = 64 - t; j >= 0; j--) {
+        let hex = "0x";
+        for (let i = 0; i < j; i++) {
+          hex += "0";
+        }
+        for (let d = 0; d < t; d++) {
+          hex += s[k];
+        }
+        for (let i = hex.length; i < 66; i++) {
+          hex += "0";
+        }
+        arr.push(hex);
+      }
     }
-    hex += s;
-    arr.push(hex);
   }
   return arr;
 }
-let r2 = rule2();
-console.log(r2[r2.length - 1]);
+// console.log(rule2());
 // getAddrs(rule2());
+
+function rule3() {
+  let s = "0123456789abcdef";
+  let arr = [];
+  let hex = "0x";
+  hex += s;
+  hex += s;
+  hex += s;
+  hex += s;
+  arr.push(hex);
+  return arr;
+}
+// console.log(rule3());
+// getAddrs(rule3());
+
+function rule4() {
+  let arr = [];
+  arr.push("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+  return arr;
+}
+getAddrs(rule4());
