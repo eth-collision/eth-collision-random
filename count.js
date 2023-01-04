@@ -5,8 +5,11 @@ const { apiKey, tgKey, tgChatId } = require("./config.js");
 
 function sendTgMsg(message) {
   const { tgKey, tgChatId } = require("./config.js");
-  const url = `https://api.telegram.org/bot${tgKey}/sendMessage?chat_id=${tgChatId}&text=${message}`;
-  axios.get(url);
+  const url = `https://api.telegram.org/bot${tgKey}/sendMessage`;
+  axios.post(url, {
+    chat_id: tgChatId,
+    text: message,
+  });
 }
 
 function getFileCount(file) {
@@ -29,11 +32,12 @@ function getFileCount(file) {
 function countFile() {
   let msg = "";
   Promise.all([
-    getFileCount("no.txt").then((res) => (msg += `no: ${res}\n`)),
-    getFileCount("yes.txt").then((res) => (msg += `yes: ${res}\n`)),
-    getFileCount("err.txt").then((res) => (msg += `err: ${res}\n`)),
-    getFileCount("no-numbers.txt").then((res) => (msg += `no: ${res}\n`)),
-    getFileCount("yes-numbers.txt").then((res) => (msg += `yes: ${res}\n`)),
+    getFileCount("no-random.txt").then((res) => (msg += `no-random: ${res}\n`)),
+    getFileCount("yes-random.txt").then((res) => (msg += `yes-random: ${res}\n`)),
+    getFileCount("err-random.txt").then((res) => (msg += `err-random: ${res}\n`)),
+    getFileCount("no-numbers.txt").then((res) => (msg += `no-numbers: ${res}\n`)),
+    getFileCount("yes-numbers.txt").then((res) => (msg += `yes-numbers: ${res}\n`)),
+    getFileCount("err-numbers.txt").then((res) => (msg += `err-numbers: ${res}\n`)),
   ]).then(() => {
     sendTgMsg(msg);
   });
