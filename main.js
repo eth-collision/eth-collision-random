@@ -114,9 +114,9 @@ function getFileCount(file) {
 function countFile() {
   let msg = "";
   Promise.all([
-    getFileCount("no.txt").then((res) => (msg += `no: ${res};`)),
-    getFileCount("yes.txt").then((res) => (msg += `yes: ${res};`)),
-    getFileCount("err.txt").then((res) => (msg += `err: ${res};`)),
+    getFileCount("no.txt").then((res) => (msg += `no: ${res}; `)),
+    getFileCount("yes.txt").then((res) => (msg += `yes: ${res}; `)),
+    getFileCount("err.txt").then((res) => (msg += `err: ${res}; `)),
   ]).then(() => {
     sendTgMsg(msg);
   });
