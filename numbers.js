@@ -50,9 +50,6 @@ function execOnceMultiAddr(keys, addrs) {
     }
     s = s.slice(0, -1);
     getBalanceMultiAddr(k, s);
-    setTimeout(() => {
-      console.log("Waiting for 1 second...");
-    }, 1000);
   }
 }
 
@@ -82,6 +79,9 @@ function rule2() {
     }
     // console.log(arr)
     getAddrs(arr);
+    setTimeout(() => {
+      console.log("Waiting for 1 second...");
+    }, 1000);
   }
 }
 rule2();
