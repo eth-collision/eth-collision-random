@@ -20,8 +20,7 @@ function getAddress(privateKey) {
 while (true) {
   let priKey = genRandPriKey();
   let [p, a] = getAddress(priKey);
-  if (a.startsWith("0x88888")) {
+  if (a.startsWith("0x88888") && a.endsWith("88888")) {
     console.log(p, a);
-    break
   }
 }
