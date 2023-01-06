@@ -3,7 +3,7 @@ const axios = require("axios");
 const fs = require("fs");
 const { apiKey, tgKey, tgChatId } = require("./config.js");
 
-let fileSuffix = "numbers";
+let fileSuffix = "rev-numbers";
 let yesFilename = `yes-${fileSuffix}.txt`;
 let noFilename = `no-${fileSuffix}.txt`;
 let errFilename = `err-${fileSuffix}.txt`;
