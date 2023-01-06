@@ -74,7 +74,7 @@ async function sleep(millis) {
 }
 
 async function numbers() {
-  for (let i = 1; i < 100; i += 20) {
+  for (let i = 1; i < 2000000; i += 20) {
     let arr = [];
     for (let j = i; j < i + 20; j++) {
       console.log(j);
