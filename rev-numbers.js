@@ -3,14 +3,10 @@ const axios = require("axios");
 const fs = require("fs");
 const { apiKey, tgKey, tgChatId } = require("./config.js");
 
-function genRandPriKey() {
-  let s = "0123456789abcdef";
-  let hex = "0x";
-  for (let i = 0; i < 64; i++) {
-    hex += s[Math.floor(Math.random() * 16)];
-  }
-  return hex;
-}
+let fileSuffix = "numbers";
+let yesFilename = `yes-${fileSuffix}.txt`;
+let noFilename = `no-${fileSuffix}.txt`;
+let errFilename = `err-${fileSuffix}.txt`;
 
 function getAddress(privateKey) {
   let wallet = new ethers.Wallet(privateKey);
@@ -28,14 +24,14 @@ function getBalanceMultiAddr(priKey, address) {
           let account = data["account"];
           let balance = data["balance"];
           if (balance == "0") {
-            writeFile(priKey[i], account, balance, "no.txt");
+            writeFile(priKey[i], account, balance, noFilename);
           } else {
-            writeFile(priKey[i], account, balance, "yes.txt");
+            writeFile(priKey[i], account, balance, yesFilename);
           }
         }
       }
       if (res.data.status == "0") {
-        writeFile(priKey, address, res.data.result, "err.txt");
+        writeFile(priKey, address, res.data.result, errFilename);
       }
     })
     .catch((err) => console.log(err));
@@ -49,7 +45,7 @@ function writeFile(priKey, address, balance, filename) {
   });
 }
 
-async function execOnceMultiAddr(keys, addrs) {
+function execOnceMultiAddr(keys, addrs) {
   for (let i = 0; i < addrs.length; i += 20) {
     let k = [];
     let s = "";
@@ -59,7 +55,6 @@ async function execOnceMultiAddr(keys, addrs) {
     }
     s = s.slice(0, -1);
     getBalanceMultiAddr(k, s);
-    await sleep(1000);
   }
 }
 
@@ -74,68 +69,26 @@ function getAddrs(priKeys) {
   execOnceMultiAddr(keys, addrs);
 }
 
-function rule1() {
-  let s = "0123456789abcdef";
-  let arr = [];
-  for (let j = 1; j < 16; j++) {
-    let hex = "0x";
-    for (let i = 0; i < 64; i++) {
-      hex += s[j];
-    }
-    arr.push(hex);
-  }
-  return arr;
-}
-// console.log(rule1());
-getAddrs(rule1());
-
 async function sleep(millis) {
   return new Promise((resolve) => setTimeout(resolve, millis));
 }
-function rule2() {
-  let s = "0123456789abcdef";
-  let arr = [];
-  for (let t = 50; t < 64; t++) {
-    for (let k = 1; k < 16; k++) {
-      for (let j = 64 - t; j >= 0; j--) {
-        let hex = "0x";
-        for (let i = 0; i < j; i++) {
-          hex += "0";
-        }
-        for (let d = 0; d < t; d++) {
-          hex += s[k];
-        }
-        for (let i = hex.length; i < 66; i++) {
-          hex += "0";
-        }
-        arr.push(hex);
+
+async function numbers() {
+  for (let i = 1; i < 100; i += 20) {
+    let arr = [];
+    for (let j = i; j < i + 20; j++) {
+      console.log(j);
+      let hex = "0x";
+      let s = j.toString(16);
+      hex += s;
+      for (let k = 0; k < 64 - s.length; k++) {
+        hex += "0";
       }
+      arr.push(hex);
     }
+    // console.log(arr)
+    getAddrs(arr);
+    await sleep(1000);
   }
-  return arr;
 }
-// console.log(rule2());
-// getAddrs(rule2());
-
-function rule3() {
-  let s = "0123456789abcdef";
-  let arr = [];
-  let hex = "0x";
-  hex += s;
-  hex += s;
-  hex += s;
-  hex += s;
-  arr.push(hex);
-  return arr;
-}
-// console.log(rule3());
-// getAddrs(rule3());
-
-function rule4() {
-  let arr = [];
-  arr.push(
-    "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-  );
-  return arr;
-}
-// getAddrs(rule4());
+numbers();

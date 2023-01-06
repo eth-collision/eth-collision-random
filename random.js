@@ -3,6 +3,11 @@ const axios = require("axios");
 const fs = require("fs");
 const { apiKey, tgKey, tgChatId } = require("./config.js");
 
+let fileSuffix = "random";
+let yesFilename = `yes-${fileSuffix}.txt`;
+let noFilename = `no-${fileSuffix}.txt`;
+let errFilename = `err-${fileSuffix}.txt`;
+
 function genRandPriKey() {
   let s = "0123456789abcdef";
   let hex = "0x";
@@ -24,13 +29,13 @@ function getBalance(priKey, address) {
     .then((res) => {
       if (res.data.status == "1") {
         if (res.data.result == "0") {
-          writeFile(priKey, address, res.data.result, "no.txt");
+          writeFile(priKey, address, res.data.result, noFilename);
         } else {
-          writeFile(priKey, address, res.data.result, "yes.txt");
+          writeFile(priKey, address, res.data.result, yesFilename);
         }
       }
       if (res.data.status == "0") {
-        writeFile(priKey, address, res.data.result, "err.txt");
+        writeFile(priKey, address, res.data.result, errFilename);
       }
     })
     .catch((err) => console.log(err));
@@ -47,14 +52,14 @@ function getBalanceMultiAddr(priKey, address) {
           let account = data["account"];
           let balance = data["balance"];
           if (balance == "0") {
-            writeFile(priKey[i], account, balance, "no.txt");
+            writeFile(priKey[i], account, balance, noFilename);
           } else {
-            writeFile(priKey[i], account, balance, "yes.txt");
+            writeFile(priKey[i], account, balance, yesFilename);
           }
         }
       }
       if (res.data.status == "0") {
-        writeFile(priKey, address, res.data.result, "err.txt");
+        writeFile(priKey, address, res.data.result, errFilename);
       }
     })
     .catch((err) => console.log(err));
@@ -114,9 +119,9 @@ function getFileCount(file) {
 function countFile() {
   let msg = "";
   Promise.all([
-    getFileCount("no.txt").then((res) => (msg += `no: ${res}; `)),
-    getFileCount("yes.txt").then((res) => (msg += `yes: ${res}; `)),
-    getFileCount("err.txt").then((res) => (msg += `err: ${res}; `)),
+    getFileCount(noFilename).then((res) => (msg += `no: ${res}; `)),
+    getFileCount(yesFilename).then((res) => (msg += `yes: ${res}; `)),
+    getFileCount(errFilename).then((res) => (msg += `err: ${res}; `)),
   ]).then(() => {
     sendTgMsg(msg);
   });
