@@ -17,6 +17,7 @@ function getAddress(privateKey) {
   return [privateKey, wallet.address];
 }
 
+console.log("Start");
 while (true) {
   let priKey = genRandPriKey();
   let [p, a] = getAddress(priKey);

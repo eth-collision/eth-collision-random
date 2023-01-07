@@ -57,6 +57,9 @@ function countFile() {
     // getFileCount("err-rev-numbers.txt").then(
     //   (res) => (msg += `err-rev-numbers: ${res}\n`)
     // ),
+    getFileCount("find-addr.txt").then(
+      (res) => (msg += `find-addr: ${res}\n`)
+    ),
   ]).then(() => {
     sendTgMsg(msg);
   });
