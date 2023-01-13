@@ -39,27 +39,6 @@ function countFile() {
     getFileCount("err-random.txt").then(
       (res) => (msg += `err-random: ${res}\n`)
     ),
-    // getFileCount("no-numbers.txt").then(
-    //   (res) => (msg += `no-numbers: ${res}\n`)
-    // ),
-    // getFileCount("yes-numbers.txt").then(
-    //   (res) => (msg += `yes-numbers: ${res}\n`)
-    // ),
-    // getFileCount("err-numbers.txt").then(
-    //   (res) => (msg += `err-numbers: ${res}\n`)
-    // ),
-    // getFileCount("no-rev-numbers.txt").then(
-    //   (res) => (msg += `no-rev-numbers: ${res}\n`)
-    // ),
-    // getFileCount("yes-rev-numbers.txt").then(
-    //   (res) => (msg += `yes-rev-numbers: ${res}\n`)
-    // ),
-    // getFileCount("err-rev-numbers.txt").then(
-    //   (res) => (msg += `err-rev-numbers: ${res}\n`)
-    // ),
-    // getFileCount("find-addr.txt").then(
-    //   (res) => (msg += `find-addr: ${res}\n`)
-    // ),
   ]).then(() => {
     sendTgMsg(msg);
   });
