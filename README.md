@@ -1,6 +1,6 @@
-# Eth collision
+# Eth collision random
 
-It's a program that generates an Ethereum private key and queries its balance in etherscan.io.
+It's a program that generates a random Ethereum private key and queries its balance in etherscan.io.
 
 ## Usage
 
