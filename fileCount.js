@@ -39,6 +39,13 @@ function countFile() {
     getFileCount("err-random.txt").then(
       (res) => (msg += `err-random: ${res}\n`)
     ),
+    getFileCount("no-random-word.txt").then((res) => (msg += `no-random: ${res}\n`)),
+    getFileCount("yes-random.txt").then(
+      (res) => (msg += `yes-random-word: ${res}\n`)
+    ),
+    getFileCount("err-random-word.txt").then(
+      (res) => (msg += `err-random: ${res}\n`)
+    ),
   ]).then(() => {
     sendTgMsg(msg);
   });
