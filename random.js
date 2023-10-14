@@ -1,94 +1,72 @@
+const fs = require("fs");
 const { ethers } = require("ethers");
 const axios = require("axios");
-const fs = require("fs");
-const { apiKey, tgKey, tgChatId } = require("./config.js");
 
-let fileSuffix = "random";
-let yesFilename = `yes-${fileSuffix}.txt`;
-let noFilename = `no-${fileSuffix}.txt`;
-let errFilename = `err-${fileSuffix}.txt`;
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
+const FILE_PREFIX = "random";
+const YES_FILENAME = `yes-${FILE_PREFIX}.txt`;
+const NO_FILENAME = `no-count-${FILE_PREFIX}.txt`;
+const ERR_FILENAME = `err-count-${FILE_PREFIX}.txt`;
 
-function genRandPriKey() {
-  let s = "0123456789abcdef";
-  let hex = "0x";
-  for (let i = 0; i < 64; i++) {
-    hex += s[Math.floor(Math.random() * 16)];
-  }
-  return hex;
+let noCount = readCounterFromFile(NO_FILENAME);
+let errCount = readCounterFromFile(ERR_FILENAME);
+
+function createRandomWallet() {
+    return ethers.Wallet.createRandom();
 }
 
-function getAddress(privateKey) {
-  let wallet = new ethers.Wallet(privateKey);
-  return [privateKey, wallet.address];
-}
+async function fetchBalancesForAddresses(privateKeys, addresses) {
+  const url = `https://api.etherscan.io/api?module=account&action=balancemulti&address=${addresses.join(',')}&tag=latest&apikey=${ETHERSCAN_API_KEY}`;
+  
+  try {
+    const { data } = await axios.get(url);
 
-function getBalance(priKey, address) {
-  url = `https://api.etherscan.io/api?module=account&action=balance&address=${address}&tag=latest&apikey=${apiKey}`;
-  axios
-    .get(url)
-    .then((res) => {
-      if (res.data.status == "1") {
-        if (res.data.result == "0") {
-          writeFile(priKey, address, res.data.result, noFilename);
+    if (data.status === "1") {
+      data.result.forEach((result, index) => {
+        const { account, balance } = result;
+
+        if (balance === "0") {
+          noCount++;
+          updateCounterFile(NO_FILENAME, noCount);
         } else {
-          writeFile(priKey, address, res.data.result, yesFilename);
+          writeToFile(privateKeys[index], account, balance, YES_FILENAME);
         }
-      }
-      if (res.data.status == "0") {
-        writeFile(priKey, address, res.data.result, errFilename);
-      }
-    })
-    .catch((err) => console.log(err));
+      });
+    } else if (data.status === "0") {
+      errCount++;
+      updateCounterFile(ERR_FILENAME, errCount);
+    }
+
+  } catch (error) {
+    console.error("Failed to fetch balances:", error.message);
+  }
 }
 
-function getBalanceMultiAddr(priKey, address) {
-  url = `https://api.etherscan.io/api?module=account&action=balancemulti&address=${address}&tag=latest&apikey=${apiKey}`;
-  axios
-    .get(url)
-    .then((res) => {
-      if (res.data.status == "1") {
-        for (let i = 0; i < res.data.result.length; i++) {
-          let data = res.data.result[i];
-          let account = data["account"];
-          let balance = data["balance"];
-          if (balance == "0") {
-            writeFile(priKey[i], account, balance, noFilename);
-          } else {
-            writeFile(priKey[i], account, balance, yesFilename);
-          }
-        }
-      }
-      if (res.data.status == "0") {
-        writeFile(priKey, address, res.data.result, errFilename);
-      }
-    })
-    .catch((err) => console.log(err));
-}
-
-function writeFile(priKey, address, balance, filename) {
-  data = `${priKey},${address},${balance}\n`;
-  fs.appendFile(filename, data, function (err) {
-    if (err) console.log(err);
-    console.log(`Saved: ${address}`);
+function writeToFile(privateKey, address, balance, filename) {
+  const record = `${privateKey},${address},${balance}\n`;
+  fs.appendFile(filename, record, (err) => {
+    if (err) console.error("Failed to save data:", err.message);
+    else console.log(`Saved: ${address}`);
   });
 }
 
-function execOnceSingleAddr() {
-  let priKey = genRandPriKey();
-  let addr = getAddress(priKey);
+function readCounterFromFile(filename) {
+    if (fs.existsSync(filename)) {
+        return parseInt(fs.readFileSync(filename, 'utf8'), 10);
+    }
+    return 0;
 }
 
-function execOnceMultiAddr() {
-  let keys = [];
-  let addrs = "";
-  for (let i = 0; i < 20; i++) {
-    let priKey = genRandPriKey();
-    let addr = getAddress(priKey);
-    keys.push(priKey);
-    addrs += addr[1] + ",";
-  }
-  addrs = addrs.slice(0, -1);
-  getBalanceMultiAddr(keys, addrs);
+function updateCounterFile(filename, count) {
+    fs.writeFileSync(filename, count.toString());
 }
 
-setInterval(execOnceMultiAddr, 1000);
+function checkBalancesForMultipleAddresses() {
+    const wallets = Array.from({ length: 20 }, createRandomWallet);
+    const privateKeys = wallets.map(wallet => wallet.privateKey);
+    const addresses = wallets.map(wallet => wallet.address);
+
+    fetchBalancesForAddresses(privateKeys, addresses);
+}
+
+setInterval(checkBalancesForMultipleAddresses, 1000);

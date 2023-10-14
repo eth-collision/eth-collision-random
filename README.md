@@ -6,7 +6,7 @@ It's a program that generates a random Ethereum private key and queries its bala
 
 ```
 npm i
-cp config-example.js config.js
+export ETHERSCAN_API_KEY='your_etherscan_api_key'
 node random.js
 ```
 
