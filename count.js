@@ -3,6 +3,10 @@ const fs = require("fs");
 
 const TELEGRAM_API_KEY = process.env.TELEGRAM_API_KEY;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+if (!TELEGRAM_API_KEY || !TELEGRAM_CHAT_ID) {
+  console.error("Please set TELEGRAM_API_KEY and TELEGRAM_CHAT_ID environment variables");
+  process.exit(1);
+}
 const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_API_KEY}/sendMessage`;
 
 async function sendMessageViaTelegram(message) {

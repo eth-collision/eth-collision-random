@@ -3,10 +3,15 @@ const { ethers } = require("ethers");
 const axios = require("axios");
 
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
+if (!ETHERSCAN_API_KEY) {
+  console.error("Please set ETHERSCAN_API_KEY environment variable");
+  process.exit(1);
+}
+
 const FILE_PREFIX = "random";
 const YES_FILENAME = `yes-${FILE_PREFIX}.txt`;
-const NO_FILENAME = `no-count-${FILE_PREFIX}.txt`;
-const ERR_FILENAME = `err-count-${FILE_PREFIX}.txt`;
+const NO_FILENAME = `no-${FILE_PREFIX}.txt`;
+const ERR_FILENAME = `err-${FILE_PREFIX}.txt`;
 
 let noCount = readCounterFromFile(NO_FILENAME);
 let errCount = readCounterFromFile(ERR_FILENAME);
