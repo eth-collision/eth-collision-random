@@ -20,7 +20,7 @@
 1. Clone the repository:
 
 ```
-git clone https://github.com/your-username/eth-collision-random.git
+git clone https://github.com/eth-collision/eth-collision-random.git
 ```
 
 
