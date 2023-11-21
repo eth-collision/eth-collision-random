@@ -24,7 +24,7 @@ docker run \
   -d \
   --name eth-collision-random \
   --env ETHERSCAN_API_KEY='your_etherscan_api_key' \
-  smallyu/eth-collision-random:0.0.1
+  smallyu/eth-collision-random:latest
 ```
 
 2. Docker Run with Telegram Support: If you want to enable Telegram notifications, you can also set the Telegram API key and Chat ID as environment variables. Replace 'your_telegram_bot_key' and 'your_telegram_chat_id' with your actual Telegram credentials.
@@ -36,12 +36,12 @@ docker run \
   --env ETHERSCAN_API_KEY='your_etherscan_api_key' \
   --env TELEGRAM_API_KEY='your_telegram_bot_key' \
   --env TELEGRAM_CHAT_ID='your_telegram_chat_id' \
-  smallyu/eth-collision-random:0.0.1
+  smallyu/eth-collision-random:latest
 ```
 
 ### Docker Image
 
-The Docker image for Eth Collision Random is available on Docker Hub and can be pulled using the tag smallyu/eth-collision-random:0.0.1.
+The Docker image for Eth Collision Random is available on Docker Hub and can be pulled using the tag smallyu/eth-collision-random:latest.
 
 ## Run from source
 
