@@ -30,9 +30,9 @@ function readCountFromFile(filePath) {
 
 async function reportCounts() {
   try {
-    const noCount = readCountFromFile("no-count-random.txt");
+    const noCount = readCountFromFile("no-random.txt");
     const yesCount = await countLinesInFile("yes-random.txt");  // We still count lines for "yes" because it contains detailed records
-    const errCount = readCountFromFile("err-count-random.txt");
+    const errCount = readCountFromFile("err-random.txt");
 
     const reportMessage = `No: ${noCount}\nYes: ${yesCount}\nErr: ${errCount}`;
     await sendMessageViaTelegram(reportMessage);
