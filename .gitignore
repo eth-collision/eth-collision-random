@@ -4,3 +4,4 @@ config.js
 nohup.out
 .env
 random_pid.txt
+run.sh

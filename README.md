@@ -10,12 +10,47 @@
 - Sends regular summary reports via Telegram.
 - Optional utility (`count.js`) to monitor and report the occurrences of generated keys.
 
-## Prerequisites
+
+## Docker Support
+
+Eth Collision Random now also supports deployment using Docker, making it easier to set up and run in a containerized environment.
+
+### Using Docker
+
+1. Basic Docker Run: To run Eth Collision Random using Docker, you can use the following command. This will pull the image and run the container in detached mode. Make sure to replace 'your_etherscan_api_key' with your actual Etherscan API key.
+
+```
+docker run \
+  -d \
+  --name eth-collision-random \
+  --env ETHERSCAN_API_KEY='your_etherscan_api_key' \
+  smallyu/eth-collision-random:0.0.1
+```
+
+2. Docker Run with Telegram Support: If you want to enable Telegram notifications, you can also set the Telegram API key and Chat ID as environment variables. Replace 'your_telegram_bot_key' and 'your_telegram_chat_id' with your actual Telegram credentials.
+
+```
+docker run \
+  -d \
+  --name eth-collision-random \
+  --env ETHERSCAN_API_KEY='your_etherscan_api_key' \
+  --env TELEGRAM_API_KEY='your_telegram_bot_key' \
+  --env TELEGRAM_CHAT_ID='your_telegram_chat_id' \
+  smallyu/eth-collision-random:0.0.1
+```
+
+### Docker Image
+
+The Docker image for Eth Collision Random is available on Docker Hub and can be pulled using the tag smallyu/eth-collision-random:0.0.1.
+
+## Run from source
+
+### Prerequisites
 
 - [Node.js](https://nodejs.org/) (recommended version 14 or above)
 - An [Etherscan.io](https://etherscan.io/) API key. You can obtain one by registering on the Etherscan website.
 
-## Installation
+### Installation
 
 1. Clone the repository:
 
@@ -38,7 +73,7 @@ npm install
 ```
 
 
-## Usage
+### Usage
 
 1. Export your Etherscan.io API key:
 
